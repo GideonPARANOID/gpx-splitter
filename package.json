@@ -1,0 +1,16 @@
+{
+  "name": "gpx-splitter",
+  "version": "0.0.1",
+  "author": "Gideon MW Jones",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "format": "prettier --write src"
+  },
+  "dependencies": {
+    "fast-xml-parser": "^4.3.6"
+  },
+  "devDependencies": {
+    "prettier": "^3.2.5"
+  }
+}
