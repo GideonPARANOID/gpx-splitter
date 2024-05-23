@@ -1,5 +1,5 @@
 import { split } from './convert';
-import { RouteDescription, RouteMetadata, SplitMethod } from './types';
+import type { RouteDescription, RouteMetadata, SplitMethod } from './types';
 
 const gpx = {
   mimeType: 'application/gpx+xml',

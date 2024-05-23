@@ -1,4 +1,4 @@
-import { getLessThanIndex } from '../../src/convert';
+import { getLessThanIndex } from '../../src/utils';
 
 describe('convert', () => {
   describe('get less than index', () => {

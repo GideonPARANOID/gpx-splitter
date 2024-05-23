@@ -12,7 +12,7 @@ export interface RouteDescription {
   metadata: RouteMetadata;
 }
 
-export type Splitter = (parsed: GPX, parts: number) => { route: GPX; metadata: RouteMetadata }[];
+export type Splitter = (points: TrackPoint[], parts: number) => [number, number][];
 
 export interface Point {
   latitude: number;
