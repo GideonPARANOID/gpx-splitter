@@ -7,7 +7,8 @@ const outDir = tsConfigJson.compilerOptions.outDir;
 
 const build = async () => {
   try {
-    const fastXmlParserVersion = packageJson.dependencies['fast-xml-parser'].replace('^', '');
+    // cdns for fast-xml-parser don't seem to include the required builder component
+    const fastXmlParserVersion = packageJson.dependencies['fast-xml-parser'];
     const commands = [
       'yarn tsc --noEmit',
       `rm -rf ${outDir}`,
