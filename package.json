@@ -5,6 +5,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
+    "build": "exit 0",
     "format": "prettier --write src"
   },
   "dependencies": {

@@ -1,7 +1,7 @@
-name: Branch
+name: Main
 on:
   push:
-    branches-ignore: [main]
+    branches: [main]
     tags-ignore: ["**"]
 
 jobs:
@@ -19,3 +19,8 @@ jobs:
           node-version: 20
       - run: yarn install
       - run: yarn build
+      - uses: actions/configure-pages@v4
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - uses: actions/deploy-pages@v4
