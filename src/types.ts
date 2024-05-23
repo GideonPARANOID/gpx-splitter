@@ -4,11 +4,15 @@ export enum SplitMethod {
 }
 
 export interface RouteMetadata {
+  pointsCount: number;
   lengthMeters: number;
 }
 
-export interface RouteDescription {
-  route: string;
+export interface SplitRoute {
+  parts: {
+    route: string;
+    metadata: RouteMetadata;
+  }[];
   metadata: RouteMetadata;
 }
 

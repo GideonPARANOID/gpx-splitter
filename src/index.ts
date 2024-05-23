@@ -1,5 +1,6 @@
 import { split } from './convert';
-import type { RouteDescription, RouteMetadata, SplitMethod } from './types';
+import type { SplitRoute, RouteMetadata, SplitMethod } from './types';
+import { metersToKilometers } from './utils';
 
 const gpx = {
   mimeType: 'application/gpx+xml',
@@ -20,31 +21,53 @@ addEventListener('submit', async (event): Promise<void> => {
 
   console.log(input);
 
-  const chunks = await split(await input.file.text(), input.parts, input.method);
+  try {
+    const result = await split(await input.file.text(), input.parts, input.method);
 
-  setOutputList(input.file.name.replace(gpx.suffix, ''), chunks);
+    setInfo(result.metadata);
+    setOutput(input.file.name.replace(gpx.suffix, ''), result.parts);
+  } catch (error) {
+    setError('Error encountered during splitting');
+    throw error;
+  }
 });
 
-const setOutputList = (inputFileName: string, chunks: RouteDescription[]): void => {
-  const outputList = document.getElementById('output');
-  outputList.innerHTML = '';
+const setError = (error: string): void => {
+  document.getElementById('info-table-body').innerHTML = `
+<tr>
+  <td colspan="2">${error}</td>
+</tr>`;
 
-  chunks.forEach((content, index) => {
-    const file = new File([content.route], `${inputFileName}-${index}${gpx.suffix}`, {
+  document.getElementById('output-table-body').innerHTML = `
+<tr>
+  <td colspan="4">${error}</td>
+</tr>`;
+};
+
+const setInfo = (metadata: RouteMetadata): void => {
+  document.getElementById('info-table-body').innerHTML = `
+<tr>
+  <td>${metersToKilometers(metadata.lengthMeters)}</td>
+  <td>${metadata.pointsCount}</td>
+</tr>`;
+};
+
+const setOutput = (inputFileName: string, parts: SplitRoute['parts']): void => {
+  const rows = parts.map((content, index) => {
+    const file = new File([content.route], `${inputFileName}-${index + 1}${gpx.suffix}`, {
       type: gpx.mimeType,
     });
 
-    outputList.appendChild(createListLink(file, content.metadata));
+    return createOutputRow(file, index + 1, content.metadata);
   });
+
+  const outputTableBody = (document.getElementById('output-table-body').innerHTML = rows.join(''));
 };
 
-const createListLink = (file: File, metadata: RouteMetadata): HTMLElement => {
-  const link = document.createElement('a');
-  link.innerText = `${file.name} ${metadata.lengthMeters}m`;
-  link.href = URL.createObjectURL(file);
-  link.download = file.name;
-
-  const listItem = document.createElement('li');
-  listItem.appendChild(link);
-  return listItem;
-};
+const createOutputRow = (file: File, index: number, metadata: RouteMetadata): string => `
+<tr>
+  <th scope="row">${index}</th>
+  <td>${metersToKilometers(metadata.lengthMeters)}</td>
+  <td>${metadata.pointsCount}</td>
+  <td><a href="${URL.createObjectURL(file)}" download="${file.name}">Download</a></td>
+</tr>`;

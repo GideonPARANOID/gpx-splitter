@@ -1,5 +1,5 @@
 import type { XMLBuilder, XMLParser } from 'fast-xml-parser';
-import { GPX, RouteDescription, SplitMethod, Splitter } from './types';
+import { GPX, SplitRoute, SplitMethod, Splitter } from './types';
 import { calculateDistancesFromStart, getLessThanIndex } from './utils';
 
 declare global {
@@ -11,7 +11,7 @@ const defaultArgs = {
   ignoreAttributes: false,
 };
 
-export const split = (data: string, parts: number, method: SplitMethod): RouteDescription[] => {
+export const split = (data: string, parts: number, method: SplitMethod): SplitRoute => {
   // @ts-expect-error global available
   const parser = new XMLParser(defaultArgs);
   // @ts-expect-error global available
@@ -21,30 +21,38 @@ export const split = (data: string, parts: number, method: SplitMethod): RouteDe
   const points = parsed.gpx.trk.trkseg.trkpt;
   const distanceFromStart = calculateDistancesFromStart(points);
 
-  console.log(`total points: ${distanceFromStart.length}`);
-  console.log(`total distance: ${distanceFromStart[distanceFromStart.length - 1]}`);
   console.log(`total points: ${points.length}`);
+  console.log(`total distance: ${distanceFromStart[distanceFromStart.length - 1]}`);
 
-  const chunks = method === SplitMethod.POINTS ? splitPoints(points, parts) : splitDistance(points, parts);
+  const chunks = (method === SplitMethod.POINTS ? splitPoints(points, parts) : splitDistance(points, parts)).map(
+    (chunk, index) => {
+      const output = structuredClone(parsed);
+      const startIndex = chunk[0];
+      const endIndex = chunk[1];
 
-  return chunks.map((chunk, index) => {
-    const output = structuredClone(parsed);
-    const startIndex = chunk[0];
-    const endIndex = chunk[1];
+      console.log(`chunk ${index} indices: ${startIndex}-${endIndex}`);
 
-    console.log(`chunk ${index} indices: ${startIndex}-${endIndex}`);
+      output.gpx.trk.trkseg.trkpt = output.gpx.trk.trkseg.trkpt.slice(startIndex, endIndex);
+      output.gpx.metadata.name = `${output.gpx.metadata.name} part ${index + 1}`;
+      output.gpx.trk.name = `${output.gpx.trk.name} part ${index + 1}`;
 
-    output.gpx.trk.trkseg.trkpt = output.gpx.trk.trkseg.trkpt.slice(startIndex, endIndex - startIndex);
-    output.gpx.metadata.name = `${output.gpx.metadata.name} part ${index + 1}`;
-    output.gpx.trk.name = `${output.gpx.trk.name} part ${index + 1}`;
+      return {
+        route: builder.build(output),
+        metadata: {
+          pointsCount: endIndex - startIndex,
+          lengthMeters: distanceFromStart[endIndex] - distanceFromStart[startIndex],
+        },
+      };
+    },
+  );
 
-    return {
-      route: builder.build(output),
-      metadata: {
-        lengthMeters: distanceFromStart[endIndex] - distanceFromStart[startIndex],
-      },
-    };
-  });
+  return {
+    parts: chunks,
+    metadata: {
+      pointsCount: distanceFromStart.length,
+      lengthMeters: distanceFromStart[distanceFromStart.length - 1],
+    },
+  };
 };
 
 const splitPoints: Splitter = (points, parts) => {

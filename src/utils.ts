@@ -30,3 +30,5 @@ export const getLessThanIndex = (quantities: number[], value: number): number =>
 
     return value < current ? found : index;
   }, -1);
+
+export const metersToKilometers = (meters: number): string => (meters / 1e3).toFixed(3);
