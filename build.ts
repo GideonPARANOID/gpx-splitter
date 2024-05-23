@@ -1,20 +1,31 @@
 import * as esbuild from 'esbuild';
 import { execSync } from 'child_process';
-import tsConfig from './tsconfig.json';
+import tsConfigJson from './tsconfig.json';
+import packageJson from './package.json';
 
-const outDir = tsConfig.compilerOptions.outDir;
+const outDir = tsConfigJson.compilerOptions.outDir;
 
 const build = async () => {
-  //  execSync('yarn tsc --noEmit')
-  execSync(`rm -rf ${outDir}`);
-  execSync(`mkdir -p ${outDir}/lib`);
-  execSync(`cp src/*html ${outDir}/`);
-  execSync(
-    'curl https://raw.githubusercontent.com/NaturalIntelligence/fast-xml-parser/v4.4.0/lib/fxbuilder.min.js > dist/lib/fxbuilder.min.js',
-  );
-  execSync(
-    'curl https://raw.githubusercontent.com/NaturalIntelligence/fast-xml-parser/v4.4.0/lib/fxparser.min.js > dist/lib/fxparser.min.js',
-  );
+  try {
+    const fastXmlParserVersion = packageJson.dependencies[
+      'fast-xml-parser'
+    ].replace('^', '');
+    const commands = [
+      'yarn tsc --noEmit',
+      `rm -rf ${outDir}`,
+      `mkdir -p ${outDir}/lib`,
+      `cp src/*html ${outDir}/`,
+
+      `curl https://raw.githubusercontent.com/NaturalIntelligence/fast-xml-parser/v${fastXmlParserVersion}/lib/fxbuilder.min.js > ${outDir}/lib/fxbuilder.min.js`,
+      ,
+      `curl https://raw.githubusercontent.com/NaturalIntelligence/fast-xml-parser/v${fastXmlParserVersion}/lib/fxparser.min.js > ${outDir}/lib/fxparser.min.js`,
+    ];
+
+    commands.forEach((command) => execSync(command));
+  } catch (error) {
+    console.error(error.stdout.toString(), error.stderr.toString());
+    process.exit(error.status);
+  }
 
   const context = await esbuild.build({
     entryPoints: ['src/index.ts'],
@@ -23,12 +34,6 @@ const build = async () => {
     target: ['chrome58', 'firefox57', 'safari11', 'edge16'],
     outfile: `${outDir}/app.js`,
   });
-
-  //await context.watch()
-
-  //const { host, port } = await context.serve({ servedir: 'dist' })
-
-  //console.log(host, port)
 };
 
 void build();

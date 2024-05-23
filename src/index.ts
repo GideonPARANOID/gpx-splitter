@@ -5,14 +5,14 @@ const gpx = {
   suffix: '.gpx',
 };
 
-addEventListener('submit', async (event): void => {
+addEventListener('submit', async (event): Promise<void> => {
   event.preventDefault();
   const formData = new FormData(event.target as HTMLFormElement);
 
   console.log('event', event, formData);
 
   const inputFile = formData.get('gpx') as File;
-  const inputParts = parseInt(formData.get('parts'), 10);
+  const inputParts = parseInt(formData.get('parts') as string, 10);
 
   console.log(inputFile, inputParts);
 
@@ -30,11 +30,11 @@ const setOutputList = (inputFileName: string, chunks: string[]): void => {
       type: gpx.mimeType,
     });
 
-    outputList.appendChild(createListLink(file, index));
+    outputList.appendChild(createListLink(file));
   });
 };
 
-const createListLink = (file: File, name: string): void => {
+const createListLink = (file: File): HTMLElement => {
   const link = document.createElement('a');
   link.innerText = file.name;
   link.href = URL.createObjectURL(file);
