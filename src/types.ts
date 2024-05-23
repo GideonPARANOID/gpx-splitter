@@ -3,7 +3,12 @@ export enum SplitMethod {
   DISTANCE = 'distance',
 }
 
-interface TrackPoint {
+export interface Point {
+  x: number;
+  y: number;
+}
+
+export interface TrackPoint {
   '@_lat': string;
   '@_lon': string;
   ele: number;

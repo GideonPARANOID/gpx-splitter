@@ -1,5 +1,5 @@
 import type { XMLBuilder, XMLParser } from 'fast-xml-parser';
-import { GPX, SplitMethod } from './types';
+import { GPX, Point, SplitMethod, TrackPoint } from './types';
 
 declare global {
   const XMLParser: XMLParser;
@@ -43,21 +43,7 @@ const splitPoints: Splitter = (parsed, parts) => {
 };
 
 const splitDistance: Splitter = (parsed, parts) => {
-  // distance expressed in degrees
-  const distanceFromStart = parsed.gpx.trk.trkseg.trkpt
-    .map((trackPoint) => ({
-      x: parseFloat(trackPoint['@_lat']),
-      y: parseFloat(trackPoint['@_lon']),
-    }))
-    .reduce((total, current, index, list) => {
-      if (index === 0) {
-        return [0];
-      }
-
-      const last = list[index - 1];
-      const distanceFromLast = ((current.x - last.x) ** 2 + (current.y - last.y) ** 2) ** 0.5;
-      return [...total, distanceFromLast + total[index - 1]];
-    }, []);
+  const distanceFromStart = calculateDistancesFromStart(parsed.gpx.trk.trkseg.trkpt);
 
   const partDistance = distanceFromStart[distanceFromStart.length - 1] / parts;
 
@@ -83,8 +69,29 @@ const splitDistance: Splitter = (parsed, parts) => {
   });
 };
 
+export const convertTrackPoint = (trackPoint: TrackPoint): Point => ({
+  x: parseFloat(trackPoint['@_lat']),
+  y: parseFloat(trackPoint['@_lon']),
+});
+
+export const calculateDistanceBetweenPoints = (one: Point, two: Point) =>
+  ((one.x - two.x) ** 2 + (one.y - two.y) ** 2) ** 0.5;
+
+// calculate a list of distances from the previous points, expressed in degrees
+export const calculateDistancesFromStart = (points: TrackPoint[]): number[] =>
+  points
+    .map((point) => convertTrackPoint(point))
+    .reduce((total, current, index, list) => {
+      if (index === 0) {
+        return [0];
+      }
+
+      const last = list[index - 1];
+      return [...total, calculateDistanceBetweenPoints(current, last) + total[index - 1]];
+    }, []);
+
 // get the index of a the last value below the value for an ordered list of numbers
-export const getLessThanIndex = (quantities: number[], value: number) =>
+export const getLessThanIndex = (quantities: number[], value: number): number =>
   quantities.reduce((found, current, index) => {
     if (value < current && index === 0) {
       return 0;
