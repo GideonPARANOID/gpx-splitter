@@ -7,9 +7,7 @@ const outDir = tsConfigJson.compilerOptions.outDir;
 
 const build = async () => {
   try {
-    const fastXmlParserVersion = packageJson.dependencies[
-      'fast-xml-parser'
-    ].replace('^', '');
+    const fastXmlParserVersion = packageJson.dependencies['fast-xml-parser'].replace('^', '');
     const commands = [
       'yarn tsc --noEmit',
       `rm -rf ${outDir}`,

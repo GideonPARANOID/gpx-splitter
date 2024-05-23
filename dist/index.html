@@ -3,26 +3,28 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="./app.js"></script>
-    <script
-      src="lib/fxparser.min.js"
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <script
-      src="lib/fxbuilder.min.js"
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
+    <script src="lib/fxparser.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="lib/fxbuilder.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   </head>
   <body>
     <div>
       <h1>GPX splitter</h1>
       <form>
         <label for="gpx">GPX file</label>
-        <input type="file" name="gpx" accept="application/gpx+xml" required />
+        <input type="file" name="gpx" id="gpx" accept="application/gpx+xml" required />
 
         <label for="parts">Number of parts</label>
-        <input type="number" name="parts" min="2" max="10" value="2" required />
+        <input type="number" name="parts" id="parts" min="2" max="10" value="2" required />
+
+        <fieldset>
+          <legend>Method</legend>
+
+          <label for="method-points">Points</label>
+          <input type="radio" name="method" id="method-points" value="points" required checked />
+
+          <label for="method-distance">Distance</label>
+          <input type="radio" name="method" id="method-distance" value="distance" required />
+        </fieldset>
 
         <input type="submit" />
       </form>

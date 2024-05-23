@@ -1,4 +1,5 @@
 import { split } from './convert';
+import { SplitMethod } from './types';
 
 const gpx = {
   mimeType: 'application/gpx+xml',
@@ -11,14 +12,17 @@ addEventListener('submit', async (event): Promise<void> => {
 
   console.log('event', event, formData);
 
-  const inputFile = formData.get('gpx') as File;
-  const inputParts = parseInt(formData.get('parts') as string, 10);
+  const input = {
+    file: formData.get('gpx') as File,
+    parts: parseInt(formData.get('parts') as string, 10),
+    method: formData.get('method') as SplitMethod,
+  };
 
-  console.log(inputFile, inputParts);
+  console.log(input);
 
-  const chunks = await split(await inputFile.text(), inputParts);
+  const chunks = await split(await input.file.text(), input.parts, input.method);
 
-  setOutputList(inputFile.name.replace(gpx.suffix, ''), chunks);
+  setOutputList(input.file.name.replace(gpx.suffix, ''), chunks);
 });
 
 const setOutputList = (inputFileName: string, chunks: string[]): void => {

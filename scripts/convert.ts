@@ -1,10 +1,8 @@
 import fs from 'fs/promises';
 
-const loadFile = async (filename = 'input.gpx') =>
-  (await fs.readFile(filename)).toString();
+const loadFile = async (filename = 'input.gpx') => (await fs.readFile(filename)).toString();
 
-const writeFile = async (filename, content) =>
-  await fs.writeFile(filename, content);
+const writeFile = async (filename, content) => await fs.writeFile(filename, content);
 
 const convert = async () => {
   const output = await split(await loadFile());
