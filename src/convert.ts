@@ -69,17 +69,10 @@ const splitDistance: Splitter = (parsed, parts) => {
     const output = structuredClone(parsed);
 
     const partDistanceToStartAt = partDistance * index;
-    const startIndex = distanceFromStart.reduce(
-      (found, current, index) => (partDistanceToStartAt <= current ? index : found),
-      0,
-    );
+    const startIndex = getLessThanIndex(distanceFromStart, partDistanceToStartAt);
 
     const partDistanceToEndAt = partDistance * (index + 1);
-    const endIndex =
-      distanceFromStart.length -
-      distanceFromStart
-        .reverse()
-        .reduce((found, current, index) => (partDistanceToEndAt <= current ? index : found), 0);
+    const endIndex = getLessThanIndex(distanceFromStart, partDistanceToEndAt);
 
     console.log(`chunk ${index} indices: ${startIndex}-${endIndex}`);
 
@@ -88,6 +81,14 @@ const splitDistance: Splitter = (parsed, parts) => {
     output.gpx.trk.name = `${output.gpx.trk.name} part ${index + 1}`;
     return output;
   });
-
-  // return [parsed];
 };
+
+// get the index of a the last value below the value for an ordered list of numbers
+export const getLessThanIndex = (quantities: number[], value: number) =>
+  quantities.reduce((found, current, index) => {
+    if (value < current && index === 0) {
+      return 0;
+    }
+
+    return value < current ? found : index;
+  }, -1);
