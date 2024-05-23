@@ -3,6 +3,8 @@ export enum SplitMethod {
   DISTANCE = 'distance',
 }
 
+export type Splitter = (parsed: GPX, parts: number) => GPX[];
+
 export interface Point {
   x: number;
   y: number;

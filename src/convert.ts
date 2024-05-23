@@ -1,12 +1,10 @@
 import type { XMLBuilder, XMLParser } from 'fast-xml-parser';
-import { GPX, Point, SplitMethod, TrackPoint } from './types';
+import { GPX, Point, SplitMethod, Splitter, TrackPoint } from './types';
 
 declare global {
   const XMLParser: XMLParser;
   const XMLBuilder: XMLBuilder;
 }
-
-type Splitter = (parsed: GPX, parts: number) => GPX[];
 
 const defaultArgs = {
   ignoreAttributes: false,
@@ -32,10 +30,12 @@ const splitPoints: Splitter = (parsed, parts) => {
   return new Array(parts).fill(undefined).map((_, index) => {
     const output = structuredClone(parsed);
 
-    output.gpx.trk.trkseg.trkpt = output.gpx.trk.trkseg.trkpt.slice(
-      Math.round(index * chunkLength),
-      (index + 1) * chunkLength,
-    );
+    const startIndex = Math.floor(index * chunkLength);
+    const endIndex = Math.min(Math.ceil(startIndex + chunkLength), quantity - 1);
+
+    console.log(`chunk ${index} indices: ${startIndex}-${endIndex}`);
+
+    output.gpx.trk.trkseg.trkpt = output.gpx.trk.trkseg.trkpt.slice(startIndex, endIndex - startIndex);
     output.gpx.metadata.name = `${output.gpx.metadata.name} part ${index + 1}`;
     output.gpx.trk.name = `${output.gpx.trk.name} part ${index + 1}`;
     return output;
@@ -54,11 +54,8 @@ const splitDistance: Splitter = (parsed, parts) => {
   return new Array(parts).fill(undefined).map((_, index) => {
     const output = structuredClone(parsed);
 
-    const partDistanceToStartAt = partDistance * index;
-    const startIndex = getLessThanIndex(distanceFromStart, partDistanceToStartAt);
-
-    const partDistanceToEndAt = partDistance * (index + 1);
-    const endIndex = getLessThanIndex(distanceFromStart, partDistanceToEndAt);
+    const startIndex = getLessThanIndex(distanceFromStart, partDistance * index);
+    const endIndex = getLessThanIndex(distanceFromStart, partDistance * (index + 1));
 
     console.log(`chunk ${index} indices: ${startIndex}-${endIndex}`);
 
