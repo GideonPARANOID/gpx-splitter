@@ -1,5 +1,5 @@
 import { split } from './convert';
-import { SplitMethod } from './types';
+import { RouteDescription, RouteMetadata, SplitMethod } from './types';
 
 const gpx = {
   mimeType: 'application/gpx+xml',
@@ -25,22 +25,22 @@ addEventListener('submit', async (event): Promise<void> => {
   setOutputList(input.file.name.replace(gpx.suffix, ''), chunks);
 });
 
-const setOutputList = (inputFileName: string, chunks: string[]): void => {
+const setOutputList = (inputFileName: string, chunks: RouteDescription[]): void => {
   const outputList = document.getElementById('output');
   outputList.innerHTML = '';
 
   chunks.forEach((content, index) => {
-    const file = new File([content], `${inputFileName}-${index}${gpx.suffix}`, {
+    const file = new File([content.route], `${inputFileName}-${index}${gpx.suffix}`, {
       type: gpx.mimeType,
     });
 
-    outputList.appendChild(createListLink(file));
+    outputList.appendChild(createListLink(file, content.metadata));
   });
 };
 
-const createListLink = (file: File): HTMLElement => {
+const createListLink = (file: File, metadata: RouteMetadata): HTMLElement => {
   const link = document.createElement('a');
-  link.innerText = file.name;
+  link.innerText = `${file.name} ${metadata.lengthMeters}m`;
   link.href = URL.createObjectURL(file);
   link.download = file.name;
 

@@ -1,5 +1,6 @@
 import type { XMLBuilder, XMLParser } from 'fast-xml-parser';
-import { GPX, Point, SplitMethod, Splitter, TrackPoint } from './types';
+import { GPX, Point, RouteDescription, SplitMethod, Splitter, TrackPoint } from './types';
+import haversine from 'haversine';
 
 declare global {
   const XMLParser: XMLParser;
@@ -10,7 +11,7 @@ const defaultArgs = {
   ignoreAttributes: false,
 };
 
-export const split = (data: string, parts: number, method: SplitMethod): string[] => {
+export const split = (data: string, parts: number, method: SplitMethod): RouteDescription[] => {
   // @ts-expect-error global available
   const parser = new XMLParser(defaultArgs);
   // @ts-expect-error global available
@@ -20,10 +21,11 @@ export const split = (data: string, parts: number, method: SplitMethod): string[
 
   const chunks = method === SplitMethod.POINTS ? splitPoints(parsed, parts) : splitDistance(parsed, parts);
 
-  return chunks.map((chunk) => builder.build(chunk));
+  return chunks.map((chunk) => ({ route: builder.build(chunk.route), metadata: chunk.metadata }));
 };
 
 const splitPoints: Splitter = (parsed, parts) => {
+  const distanceFromStart = calculateDistancesFromStart(parsed.gpx.trk.trkseg.trkpt);
   const quantity = parsed.gpx.trk.trkseg.trkpt.length;
   const chunkLength = quantity / parts;
 
@@ -38,7 +40,10 @@ const splitPoints: Splitter = (parsed, parts) => {
     output.gpx.trk.trkseg.trkpt = output.gpx.trk.trkseg.trkpt.slice(startIndex, endIndex - startIndex);
     output.gpx.metadata.name = `${output.gpx.metadata.name} part ${index + 1}`;
     output.gpx.trk.name = `${output.gpx.trk.name} part ${index + 1}`;
-    return output;
+    return {
+      route: output,
+      metadata: { lengthMeters: distanceFromStart[endIndex] - distanceFromStart[startIndex] },
+    };
   });
 };
 
@@ -62,17 +67,19 @@ const splitDistance: Splitter = (parsed, parts) => {
     output.gpx.trk.trkseg.trkpt = output.gpx.trk.trkseg.trkpt.slice(startIndex, endIndex - startIndex);
     output.gpx.metadata.name = `${output.gpx.metadata.name} part ${index + 1}`;
     output.gpx.trk.name = `${output.gpx.trk.name} part ${index + 1}`;
-    return output;
+    return {
+      route: output,
+      metadata: { lengthMeters: distanceFromStart[endIndex] - distanceFromStart[startIndex] },
+    };
   });
 };
 
 export const convertTrackPoint = (trackPoint: TrackPoint): Point => ({
-  x: parseFloat(trackPoint['@_lat']),
-  y: parseFloat(trackPoint['@_lon']),
+  latitude: parseFloat(trackPoint['@_lat']),
+  longitude: parseFloat(trackPoint['@_lon']),
 });
 
-export const calculateDistanceBetweenPoints = (one: Point, two: Point) =>
-  ((one.x - two.x) ** 2 + (one.y - two.y) ** 2) ** 0.5;
+export const calculateDistanceBetweenPoints = (one: Point, two: Point) => haversine(one, two, { unit: 'meter' });
 
 // calculate a list of distances from the previous points, expressed in degrees
 export const calculateDistancesFromStart = (points: TrackPoint[]): number[] =>
