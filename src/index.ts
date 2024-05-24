@@ -1,11 +1,7 @@
 import { split } from './convert';
 import type { SplitRoute, RouteMetadata, SplitMethod } from './types';
 import { metersToKilometers } from './utils';
-
-const gpx = {
-  mimeType: 'application/gpx+xml',
-  suffix: '.gpx',
-};
+import * as c from './constants';
 
 addEventListener('submit', async (event): Promise<void> => {
   event.preventDefault();
@@ -25,7 +21,7 @@ addEventListener('submit', async (event): Promise<void> => {
     const result = await split(await input.file.text(), input.parts, input.method);
 
     setInfo(result.metadata);
-    setOutput(input.file.name.replace(gpx.suffix, ''), result.parts);
+    setOutput(input.file.name.replace(c.gpxSuffix, ''), result.parts);
   } catch (error) {
     setError('Error encountered during splitting');
     throw error;
@@ -54,8 +50,8 @@ const setInfo = (metadata: RouteMetadata): void => {
 
 const setOutput = (inputFileName: string, parts: SplitRoute['parts']): void => {
   const rows = parts.map((content, index) => {
-    const file = new File([content.route], `${inputFileName}-${index + 1}${gpx.suffix}`, {
-      type: gpx.mimeType,
+    const file = new File([content.route], `${inputFileName}-${index + 1}${c.gpxSuffix}`, {
+      type: c.gpxMimeType,
     });
 
     return createOutputRow(file, index + 1, content.metadata);

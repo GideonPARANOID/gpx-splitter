@@ -1,8 +1,8 @@
 import { getLessThanIndex } from '../../src/utils';
 
-describe('convert', () => {
+describe('utilst', () => {
   describe('get less than index', () => {
-    it.each([
+    it.each<[number[], number, number]>([
       [[1, 2, 3, 4], 2, 1],
       [[1, 2, 3, 4], 3, 2],
       [[1, 2, 3, 4], 4, 3],
