@@ -12,8 +12,9 @@ const build = async () => {
     const commands = [
       'yarn tsc --noEmit',
       `rm -rf ${outDir}`,
-      `mkdir -p ${outDir}/lib`,
+      `mkdir -p ${outDir}/{lib,static}`,
       `cp src/*.html ${outDir}/`,
+      `cp src/static/* ${outDir}/static`,
 
       `curl https://raw.githubusercontent.com/NaturalIntelligence/fast-xml-parser/v${fastXmlParserVersion}/lib/fxbuilder.min.js > ${outDir}/lib/fxbuilder.min.js`,
       ,

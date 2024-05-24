@@ -1,0 +1,6 @@
+This favicon was generated using the following font:
+
+- Font Title: Fjalla One
+- Font Author: Copyright 2012 The Fjalla Project Authors (https://github.com/SorkinType/FjallaOne)
+- Font Source: https://fonts.gstatic.com/s/fjallaone/v15/Yq6R-LCAWCX3-6Ky7FAFnOZwkxgtUb8.ttf
+- Font License: SIL Open Font License, 1.1 (http://scripts.sil.org/OFL))
