@@ -12,6 +12,7 @@
   "dependencies": {
     "fast-xml-parser": "4.4.0",
     "haversine": "^1.1.1",
+    "leaflet": "^1.9.4",
     "water.css": "2.1.1"
   },
   "devDependencies": {
