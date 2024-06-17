@@ -1,6 +1,7 @@
 import type { XMLBuilder, XMLParser } from 'fast-xml-parser';
 import { GPX, SplitRoute, SplitMethod, Splitter } from './types';
 import { calculateDistancesFromStart, getLessThanIndex } from './utils';
+import { setMap } from './map';
 
 declare global {
   const XMLParser: XMLParser;
@@ -19,6 +20,10 @@ export const split = (data: string, parts: number, method: SplitMethod): SplitRo
 
   const parsed = parser.parse(data);
   const points = parsed.gpx.trk.trkseg.trkpt;
+
+  // TODO figure out a better place to set the map than in here
+  setMap(points);
+
   const distanceFromStart = calculateDistancesFromStart(points);
 
   console.log(`total points: ${points.length}`);
