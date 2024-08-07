@@ -1,13 +1,13 @@
 {
   "name": "gpx-splitter",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "author": "Gideon MW Jones",
   "license": "MIT",
   "type": "module",
   "scripts": {
     "build": "react-scripts build",
     "format": "prettier --write .",
-    "start": "react-scripts start",
+    "server": "react-scripts start",
     "test": "jest"
   },
   "dependencies": {
