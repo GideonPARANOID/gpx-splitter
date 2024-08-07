@@ -9,4 +9,6 @@ jobs:
     uses: ./.github/workflows/service.yml
     with:
       deploy: true
-    secrets: inherit
+    permissions:
+      pages: write
+      id-token: write

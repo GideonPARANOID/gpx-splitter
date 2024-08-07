@@ -9,4 +9,3 @@ jobs:
     uses: ./.github/workflows/service.yml
     with:
       deploy: false
-    secrets: inherit
