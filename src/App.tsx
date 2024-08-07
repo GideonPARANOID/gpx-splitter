@@ -1,8 +1,77 @@
 import React from 'react';
 import 'water.css';
 import './App.css';
+import { split } from './util/convert';
+import type { SplitRoute, RouteMetadata, SplitMethod } from './types';
+import { metersToKilometers } from './util';
+import * as c from './util/constants';
 
 const App = () => {
+  const onSubmit = async (event: React.SyntheticEvent<HTMLFormElement>): Promise<void> => {
+    event.preventDefault();
+    const formData = new FormData(event.target as HTMLFormElement);
+
+    console.log('event', event, formData);
+
+    const input = {
+      file: formData.get('gpx') as File,
+      parts: parseInt(formData.get('parts') as string, 10),
+      method: formData.get('method') as SplitMethod,
+    };
+
+    console.log(input);
+
+    try {
+      const result = await split(await input.file.text(), input.parts, input.method);
+
+      setInfo(result.metadata);
+      setOutput(input.file.name.replace(c.gpxSuffix, ''), result.parts);
+    } catch (error) {
+      setError('Error encountered during splitting');
+      throw error;
+    }
+  };
+
+  const setError = (error: string): void => {
+    document.getElementById('info-table-body')!.innerHTML = `
+<tr>
+  <td colspan="2">${error}</td>
+</tr>`;
+
+    document.getElementById('output-table-body')!.innerHTML = `
+<tr>
+  <td colspan="4">${error}</td>
+</tr>`;
+  };
+
+  const setInfo = (metadata: RouteMetadata): void => {
+    document.getElementById('info-table-body')!.innerHTML = `
+<tr>
+  <td>${metersToKilometers(metadata.lengthMeters)}</td>
+  <td>${metadata.pointsCount}</td>
+</tr>`;
+  };
+
+  const setOutput = (inputFileName: string, parts: SplitRoute['parts']): void => {
+    const rows = parts.map((content, index) => {
+      const file = new File([content.route], `${inputFileName}-${index + 1}${c.gpxSuffix}`, {
+        type: c.gpxMimeType,
+      });
+
+      return createOutputRow(file, index + 1, content.metadata);
+    });
+
+    document.getElementById('output-table-body')!.innerHTML = rows.join('');
+  };
+
+  const createOutputRow = (file: File, index: number, metadata: RouteMetadata): string => `
+<tr>
+  <th scope="row">${index}</th>
+  <td>${metersToKilometers(metadata.lengthMeters)}</td>
+  <td>${metadata.pointsCount}</td>
+  <td><a href="${URL.createObjectURL(file)}" download="${file.name}">Download</a></td>
+</tr>`;
+
   return (
     <>
       <header>
@@ -14,7 +83,7 @@ const App = () => {
       </header>
       <section>
         <h2>Input</h2>
-        <form>
+        <form onSubmit={onSubmit}>
           <label htmlFor="gpx">GPX file</label>
           <input type="file" name="gpx" id="gpx" accept="application/gpx+xml" required />
 
@@ -69,12 +138,12 @@ const App = () => {
       </section>
       <footer>
         <p>
-          Created by <a href="https://github.com/GideonPARANOID">GideonPARANOID</a>.
-          Source available on <a href="https://github.com/GideonPARANOID/gpx-splitter">GitHub</a>
+          Created by <a href="https://github.com/GideonPARANOID">GideonPARANOID</a>. Source available on{' '}
+          <a href="https://github.com/GideonPARANOID/gpx-splitter">GitHub</a>
         </p>
       </footer>
     </>
   );
-}
+};
 
 export default App;
