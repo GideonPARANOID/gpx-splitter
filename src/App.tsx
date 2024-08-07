@@ -1,6 +1,5 @@
 import React from 'react';
 import 'water.css';
-import './App.css';
 import { split } from './util/convert';
 import type { SplitRoute, RouteMetadata, SplitMethod } from './types';
 import { metersToKilometers } from './util';

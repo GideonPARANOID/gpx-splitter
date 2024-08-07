@@ -1,0 +1,22 @@
+name: Branch
+on:
+  push:
+    branches-ignore: [main]
+    tags-ignore: ['**']
+
+jobs:
+  build:
+    name: Build
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: yarn install
+      - run: yarn build
+      - run: yarn test
