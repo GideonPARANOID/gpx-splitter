@@ -6,6 +6,7 @@ on:
 
 jobs:
   build:
+    name: Build
     uses: ./.github/workflows/service.yml
     with:
       deploy: false

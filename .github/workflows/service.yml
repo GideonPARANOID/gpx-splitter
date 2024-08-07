@@ -18,6 +18,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
+      - run: echo ${{ toJson(inputs) }}
       - run: yarn install
       - run: yarn build
         env:
