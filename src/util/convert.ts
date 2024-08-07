@@ -1,20 +1,13 @@
-import type { XMLBuilder, XMLParser } from 'fast-xml-parser';
-import { GPX, SplitRoute, SplitMethod, Splitter } from './types';
-import { calculateDistancesFromStart, getLessThanIndex } from './utils';
-
-declare global {
-  const XMLParser: XMLParser;
-  const XMLBuilder: XMLBuilder;
-}
+import { XMLBuilder, XMLParser } from 'fast-xml-parser';
+import { SplitRoute, SplitMethod, Splitter } from '../types';
+import { calculateDistancesFromStart, getLessThanIndex } from './index';
 
 const defaultArgs = {
   ignoreAttributes: false,
 };
 
 export const split = (data: string, parts: number, method: SplitMethod): SplitRoute => {
-  // @ts-expect-error global available
   const parser = new XMLParser(defaultArgs);
-  // @ts-expect-error global available
   const builder = new XMLBuilder(defaultArgs);
 
   const parsed = parser.parse(data);
@@ -56,7 +49,6 @@ export const split = (data: string, parts: number, method: SplitMethod): SplitRo
 };
 
 const splitPoints: Splitter = (points, parts) => {
-  const distanceFromStart = calculateDistancesFromStart(points);
   const chunkLength = points.length / parts;
 
   return new Array(parts).fill(undefined).map((_, index) => {
