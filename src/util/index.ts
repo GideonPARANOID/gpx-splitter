@@ -1,5 +1,5 @@
 import haversine from 'haversine';
-import type { Point, TrackPoint } from './types';
+import type { Point, TrackPoint } from '../types';
 
 export const convertTrackPoint = (trackPoint: TrackPoint): Point => ({
   latitude: parseFloat(trackPoint['@_lat']),
@@ -12,7 +12,7 @@ export const calculateDistanceBetweenPoints = (one: Point, two: Point) => havers
 export const calculateDistancesFromStart = (points: TrackPoint[]): number[] =>
   points
     .map((point) => convertTrackPoint(point))
-    .reduce((total, current, index, list) => {
+    .reduce<number[]>((total, current, index, list) => {
       if (index === 0) {
         return [0];
       }

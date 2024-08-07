@@ -1,0 +1,35 @@
+on:
+  workflow_call:
+    inputs:
+      deploy:
+        required: true
+        type: boolean
+
+jobs:
+  build:
+    name: Build
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - run: echo ${{ inputs.deploy }}
+      - run: echo ${{ inputs.deploy == 'true' }}
+      - run: yarn install
+      - run: yarn build
+        env:
+          PUBLIC_URL: /${{ github.event.repository.name }}
+      - run: yarn test
+      - if: ${{ inputs.deploy }}
+        uses: actions/configure-pages@v4
+      - if: ${{ inputs.deploy }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - if: ${{ inputs.deploy }}
+        uses: actions/deploy-pages@v4
