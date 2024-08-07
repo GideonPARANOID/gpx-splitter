@@ -7,6 +7,9 @@ on:
 jobs:
   build:
     name: Build
+    permissions:
+      pages: write
+      id-token: write
     uses: ./.github/workflows/service.yml
     with:
       deploy: false
