@@ -19,16 +19,17 @@ jobs:
         with:
           node-version-file: .nvmrc
       - run: echo ${{ inputs.deploy }}
+      - run: echo ${{ inputs.deploy == 'true' }}
       - run: yarn install
       - run: yarn build
         env:
           PUBLIC_URL: /${{ github.event.repository.name }}
       - run: yarn test
-      - if: ${{ inputs.deploy == 'true' }}
+      - if: ${{ inputs.deploy }}
         uses: actions/configure-pages@v4
-      - if: ${{ inputs.deploy == 'true' }}
+      - if: ${{ inputs.deploy }}
         uses: actions/upload-pages-artifact@v3
         with:
           path: dist
-      - if: ${{ inputs.deploy == 'true' }}
+      - if: ${{ inputs.deploy }}
         uses: actions/deploy-pages@v4
