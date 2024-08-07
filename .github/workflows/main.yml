@@ -19,10 +19,11 @@ jobs:
           node-version: 20
       - run: yarn install
       - run: yarn build
+        env:
+          PUBLIC_URL: ${{ github.event.repository.name }}
       - run: yarn test
-      - run: tar -czvf dist.tar.gz dist
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist.tar.gz
+          path: dist
       - uses: actions/deploy-pages@v4
