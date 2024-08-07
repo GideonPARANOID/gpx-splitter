@@ -1,25 +1,10 @@
-<!doctype html>
-<html lang="en-GB">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta
-      name="description"
-      content="GPX splitter - a tool for splitting GPX route files into several separate files, based either on the number of track points or distance."
-    />
-    <script src="./app.js"></script>
-    <script src="./lib/fxparser.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="./lib/fxbuilder.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.min.css" />
-    <link rel="apple-touch-icon" sizes="180x180" href="./static/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="./static/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="./static/favicon-16x16.png" />
-    <link rel="manifest" href="./static/manifest.json" />
-    <title>GPX Splitter</title>
-  </head>
-  <body>
-    <div>
+import React from 'react';
+import 'water.css';
+import './App.css';
+
+const App = () => {
+  return (
+    <>
       <header>
         <h1>GPX Splitter</h1>
         <p>
@@ -30,19 +15,19 @@
       <section>
         <h2>Input</h2>
         <form>
-          <label for="gpx">GPX file</label>
+          <label htmlFor="gpx">GPX file</label>
           <input type="file" name="gpx" id="gpx" accept="application/gpx+xml" required />
 
-          <label for="parts">Number of parts</label>
+          <label htmlFor="parts">Number of parts</label>
           <input type="number" name="parts" id="parts" min="2" max="10" value="2" required />
 
           <fieldset>
             <legend>Method</legend>
 
-            <label for="method-distance">Distance</label>
+            <label htmlFor="method-distance">Distance</label>
             <input type="radio" name="method" id="method-distance" value="distance" required checked />
 
-            <label for="method-points">Points</label>
+            <label htmlFor="method-points">Points</label>
             <input type="radio" name="method" id="method-points" value="points" required />
           </fieldset>
           <input type="submit" />
@@ -59,7 +44,7 @@
           </thead>
           <tbody id="info-table-body">
             <tr>
-              <td colspan="2">N/A</td>
+              <td colSpan={2}>N/A</td>
             </tr>
           </tbody>
         </table>
@@ -77,17 +62,19 @@
           </thead>
           <tbody id="output-table-body">
             <tr>
-              <td colspan="4">N/A</td>
+              <td colSpan={4}>N/A</td>
             </tr>
           </tbody>
         </table>
       </section>
       <footer>
         <p>
-          Created by <a href="https://github.com/GideonPARANOID">GideonPARANOID</a>. Source available on
-          <a href="https://github.com/GideonPARANOID/gpx-splitter">GitHub</a>
+          Created by <a href="https://github.com/GideonPARANOID">GideonPARANOID</a>.
+          Source available on <a href="https://github.com/GideonPARANOID/gpx-splitter">GitHub</a>
         </p>
       </footer>
-    </div>
-  </body>
-</html>
+    </>
+  );
+}
+
+export default App;
