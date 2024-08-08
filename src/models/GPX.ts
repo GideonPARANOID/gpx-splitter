@@ -1,8 +1,9 @@
 import type { GPXSchema } from '../types';
 import { calculateDistancesFromStart, getLessThanIndex } from '../utils';
 import XML from './XML';
+import type { LatLngTuple } from 'leaflet';
 
-export class GPX extends XML<GPXSchema> {
+export default class GPX extends XML<GPXSchema> {
   private static readonly mimeType = 'application/gpx+xml';
   private static readonly suffix = '.gpx';
 
@@ -11,6 +12,9 @@ export class GPX extends XML<GPXSchema> {
   public readonly pointsCount: number;
   public readonly lengthMeters: number;
 
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+  // parsing
+
   protected static parseXML(raw: string): GPXSchema {
     const parsed = new XML<GPXSchema>().parse(raw);
 
@@ -18,6 +22,10 @@ export class GPX extends XML<GPXSchema> {
       throw new Error('Cannot parse GPX file');
     }
     return parsed;
+  }
+
+  public static async fromFile(file: File) {
+    return new GPX(file.name, GPX.parseXML(await file.text()));
   }
 
   constructor(name: string, parsed: GPXSchema) {
@@ -30,13 +38,22 @@ export class GPX extends XML<GPXSchema> {
     this.lengthMeters = distanceFromStart[distanceFromStart.length - 1];
   }
 
-  public static async fromFile(file: File) {
-    return new GPX(file.name, GPX.parseXML(await file.text()));
-  }
-
   public toFile(): File {
     return new File([this.build(this.parsed)], this.name, { type: GPX.mimeType });
   }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+  // drawing
+  // TODO assess whether this should be pulled out into own util
+
+  public toLine(): LatLngTuple[] {
+    return this.parsed.gpx.trk.trkseg.trkpt.map(
+      (point): LatLngTuple => [Number(point['@_lat']), Number(point['@_lon'])],
+    );
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+  // spliting
 
   public createPart(startIndex: number, endIndex: number, partNumber: number): GPX {
     const parsed = structuredClone(this.parsed);
@@ -47,9 +64,6 @@ export class GPX extends XML<GPXSchema> {
 
     return new GPX(`${this.name.replace(GPX.suffix, '')}-${partNumber}${GPX.suffix}`, parsed);
   }
-
-  ///////////////////////////////////////////////////////////////////////////////////////////////////
-  // splitters
 
   public splitPoints(parts: number): GPX[] {
     const points = this.parsed.gpx.trk.trkseg.trkpt;
