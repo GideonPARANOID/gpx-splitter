@@ -3,7 +3,11 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "outDir": "dist",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "@src/*": ["./src/*"],
+      "@tests/*": ["./tests/*"]
+    }
   },
-  "include": ["build.ts", "src/**/*"]
+  "include": ["src/**/*"]
 }

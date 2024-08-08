@@ -39,12 +39,11 @@ export class GPX extends XML<GPXSchema> {
   }
 
   public createPart(startIndex: number, endIndex: number, partNumber: number): GPX {
-      const parsed = structuredClone(this.parsed);
-      parsed.gpx.trk.trkseg.trkpt = parsed.gpx.trk.trkseg.trkpt.slice(startIndex, endIndex);
+    const parsed = structuredClone(this.parsed);
+    parsed.gpx.trk.trkseg.trkpt = parsed.gpx.trk.trkseg.trkpt.slice(startIndex, endIndex);
 
-      parsed.gpx.metadata.name = `${parsed.gpx.metadata.name} part ${partNumber}`;
-      parsed.gpx.trk.name = `${parsed.gpx.trk.name} part ${partNumber}`;
-
+    parsed.gpx.metadata.name = `${parsed.gpx.metadata.name} part ${partNumber}`;
+    parsed.gpx.trk.name = `${parsed.gpx.trk.name} part ${partNumber}`;
 
     return new GPX(`${this.name.replace(GPX.suffix, '')}-${partNumber}${GPX.suffix}`, parsed);
   }
@@ -66,7 +65,6 @@ export class GPX extends XML<GPXSchema> {
       return this.createPart(startIndex, endIndex, index + 1);
     });
   }
-
 
   public splitDistance(parts: number): GPX[] {
     const points = this.parsed.gpx.trk.trkseg.trkpt;
