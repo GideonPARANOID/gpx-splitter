@@ -3,21 +3,6 @@ export enum SplitMethod {
   DISTANCE = 'distance',
 }
 
-export interface RouteMetadata {
-  pointsCount: number;
-  lengthMeters: number;
-}
-
-export interface SplitRoute {
-  parts: {
-    route: string;
-    metadata: RouteMetadata;
-  }[];
-  metadata: RouteMetadata;
-}
-
-export type Splitter = (points: TrackPoint[], parts: number) => [number, number][];
-
 export interface Point {
   latitude: number;
   longitude: number;
@@ -30,7 +15,7 @@ export interface TrackPoint {
   time: string;
 }
 
-export interface GPX {
+export interface GPXSchema {
   gpx: {
     trk: {
       name: string;

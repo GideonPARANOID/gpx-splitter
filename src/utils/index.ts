@@ -1,4 +1,5 @@
 import haversine from 'haversine';
+
 import type { Point, TrackPoint } from '../types';
 
 export const convertTrackPoint = (trackPoint: TrackPoint): Point => ({
