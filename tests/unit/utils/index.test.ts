@@ -1,4 +1,4 @@
-import { getLessThanIndex } from '../../src/util';
+import { getLessThanIndex } from '@src/utils';
 
 describe('utilst', () => {
   describe('get less than index', () => {
