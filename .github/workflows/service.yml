@@ -23,7 +23,7 @@ jobs:
       - run: yarn install
       - run: yarn build
         env:
-          PUBLIC_URL: /${{ github.event.repository.name }}
+          PUBLIC_URL: ./
       - run: yarn test
       - if: ${{ inputs.deploy }}
         uses: actions/configure-pages@v4
