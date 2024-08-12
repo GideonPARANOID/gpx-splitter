@@ -57,7 +57,7 @@ const SelectFile = () => {
 
             {!loading && !error && 'N/A - select a GPX to view info.'}
 
-            {!loading && error && `Error parsing GPX: ${error}`}
+            {!loading && error && `Error parsing GPX - ${error}`}
           </div>
         ) : (
           <table>
