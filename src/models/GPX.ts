@@ -31,7 +31,7 @@ export default class GPX extends XML<GPXSchema> {
     const parsed = new XML<GPXSchema>().parse(raw);
 
     if (!parsed.gpx) {
-      throw new Error('Cannot parse GPX file');
+      throw new Error('Cannot parse file');
     }
     return parsed;
   }
