@@ -33,3 +33,6 @@ export const getLessThanIndex = (quantities: number[], value: number): number =>
   }, -1);
 
 export const metersToKilometers = (meters: number): string => (meters / 1e3).toFixed(3);
+
+export const randomColour = () =>
+  `rgb(${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)})`;

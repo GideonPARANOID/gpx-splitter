@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 
 import { metersToKilometers } from '../utils';
-import { GPX } from '../models/GPX';
+import Map from '../components/Map';
+import GPX from '../models/GPX';
 
-const New = () => {
+const SelectFile = () => {
   const navigate = useNavigate();
   const [gpx, setGPX] = useState<GPX | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -38,16 +39,16 @@ const New = () => {
         </form>
       </section>
 
-      <section id="gpx">
+      <section>
         <h2>Info</h2>
-        <table id="gpx-table">
+        <table>
           <thead>
             <tr>
               <th scope="col">Distance (km)</th>
               <th scope="col">Points</th>
             </tr>
           </thead>
-          <tbody id="gpx-table-body">
+          <tbody>
             <tr>
               {gpx === null ? (
                 <td colSpan={2}>N/A</td>
@@ -61,8 +62,13 @@ const New = () => {
           </tbody>
         </table>
       </section>
+
+      <section>
+        <h2>Map</h2>
+        <Map rootGPX={gpx} />
+      </section>
     </>
   );
 };
 
-export default New;
+export default SelectFile;

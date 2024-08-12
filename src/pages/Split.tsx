@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router';
 
+import Map from '../components/Map';
 import { SplitMethod } from '../types';
 import { metersToKilometers } from '../utils';
-import { GPX } from '../models/GPX';
+import GPX from '../models/GPX';
 
-const App = () => {
+const Split = () => {
   const { state } = useLocation();
 
-  console.log(state);
-
-  const [tableData, setTableData] = useState<GPX[]>([]);
+  const [gpxs, setGPXss] = useState<GPX[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>(null);
 
   const onSubmit = async (event: React.SyntheticEvent<HTMLFormElement>): Promise<void> => {
@@ -24,20 +23,17 @@ const App = () => {
       method: formData.get('method') as SplitMethod,
     };
 
-    console.log(input);
-
     try {
       const result =
         formData.get('method') === SplitMethod.POINTS
           ? state.gpx.splitPoints(input.parts)
           : state.gpx.splitDistance(input.parts); //await split(await input.file.text(), input.parts, input.method);
 
-      console.log(result);
       setErrorMessage(null);
-      setTableData(result);
+      setGPXss(result);
     } catch (error) {
       setErrorMessage('Error encountered during splitting');
-      setTableData([]);
+      setGPXss([]);
       console.error(error);
     }
   };
@@ -69,9 +65,15 @@ const App = () => {
           <input type="submit" />
         </form>
       </section>
+
+      <section>
+        <h2>Map</h2>
+        <Map gpxs={gpxs} rootGPX={state.gpx} />
+      </section>
+
       <section>
         <h2>Split files</h2>
-        <table id="tableData-table">
+        <table>
           <thead>
             <tr>
               <th scope="col">Number</th>
@@ -80,13 +82,13 @@ const App = () => {
               <th scope="col">Download</th>
             </tr>
           </thead>
-          <tbody id="tableData-table-body">
-            {tableData.length === 0 || errorMessage !== null ? (
+          <tbody>
+            {gpxs.length === 0 || errorMessage !== null ? (
               <tr>
                 <td colSpan={4}>{errorMessage === null ? 'N/A' : errorMessage}</td>
               </tr>
             ) : (
-              tableData.map((part, index) => (
+              gpxs.map((part, index) => (
                 <tr key={index}>
                   <th scope="row">{index + 1}</th>
                   <td>{metersToKilometers(part.lengthMeters)}</td>
@@ -106,4 +108,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Split;
