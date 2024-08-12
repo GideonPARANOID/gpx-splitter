@@ -1,8 +1,8 @@
-import { MapContainer, TileLayer, useMap, Polyline } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap, Polyline, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
 import type GPX from '../models/GPX';
-import { randomColour } from '../utils';
+import { randomColour, metersToKilometers } from '../utils';
 
 import './Map.css';
 
@@ -21,7 +21,26 @@ const MapInner: React.FC<MapParams> = ({ gpxs, rootGPX }) => {
   return (
     <>
       {[...(gpxs ?? []), rootGPX].filter(Boolean).map((gpx) => (
-        <Polyline positions={gpx.toLine()} key={gpx.name} color={randomColour()} />
+        <Polyline positions={gpx.toLine()} key={gpx.name} color={randomColour()}>
+          <Popup>
+            <table style={{ width: '300px' }}>
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Distance (km)</th>
+                  <th scope="col">Points</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{gpx.name}</td>
+                  <td>{metersToKilometers(gpx.lengthMeters)}</td>
+                  <td>{gpx.pointsCount}</td>
+                </tr>
+              </tbody>
+            </table>
+          </Popup>
+        </Polyline>
       ))}
     </>
   );
