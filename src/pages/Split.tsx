@@ -8,9 +8,13 @@ import GPX from '../models/GPX';
 
 const Split = () => {
   const { state } = useLocation();
-
-  const [gpxs, setGPXss] = useState<GPX[]>([]);
+  const [rootGPX, setRootGPX] = useState<GPX>(null);
+  const [gpxs, setGPXs] = useState<GPX[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>(null);
+
+  if (!rootGPX) {
+    setRootGPX(GPX.deserialise(state.gpx));
+  }
 
   const onSubmit = async (event: React.SyntheticEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
@@ -26,14 +30,14 @@ const Split = () => {
     try {
       const result =
         formData.get('method') === SplitMethod.POINTS
-          ? state.gpx.splitPoints(input.parts)
-          : state.gpx.splitDistance(input.parts); //await split(await input.file.text(), input.parts, input.method);
+          ? rootGPX.splitPoints(input.parts)
+          : rootGPX.splitDistance(input.parts); //await split(await input.file.text(), input.parts, input.method);
 
       setErrorMessage(null);
-      setGPXss(result);
+      setGPXs(result);
     } catch (error) {
       setErrorMessage('Error encountered during splitting');
-      setGPXss([]);
+      setGPXs([]);
       console.error(error);
     }
   };
@@ -68,7 +72,7 @@ const Split = () => {
 
       <section>
         <h2>Map</h2>
-        <Map gpxs={gpxs} rootGPX={state.gpx} />
+        <Map gpxs={gpxs} rootGPX={rootGPX} />
       </section>
 
       <section>
