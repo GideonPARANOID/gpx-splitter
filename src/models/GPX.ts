@@ -13,6 +13,18 @@ export default class GPX extends XML<GPXSchema> {
   public readonly lengthMeters: number;
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////
+  // string serialising to survive react-router state transitions
+
+  public static serialise(gpx: GPX): string {
+    return JSON.stringify(gpx);
+  }
+
+  public static deserialise(json: string): GPX {
+    const { name, parsed } = JSON.parse(json);
+    return new GPX(name, parsed);
+  }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
   // parsing
 
   protected static parseXML(raw: string): GPXSchema {

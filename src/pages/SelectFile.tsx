@@ -13,7 +13,7 @@ const SelectFile = () => {
   const onSubmit = async (event: React.SyntheticEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
 
-    navigate('/split', { state: { gpx } });
+    navigate('/split', { state: { gpx: GPX.serialise(gpx) } });
   };
 
   const onChange = async (event) => {

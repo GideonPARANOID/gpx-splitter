@@ -1,7 +1,7 @@
 name: Branch
 on:
   push:
-    branches-ignore: [main]
+    branches-ignore: [main, hotfix]
     tags-ignore: ['**']
 
 jobs:
