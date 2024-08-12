@@ -41,14 +41,14 @@ const SelectFile = () => {
 
       <section>
         <h2>Info</h2>
-        <table id="gpx-table">
+        <table>
           <thead>
             <tr>
               <th scope="col">Distance (km)</th>
               <th scope="col">Points</th>
             </tr>
           </thead>
-          <tbody id="gpx-table-body">
+          <tbody>
             <tr>
               {gpx === null ? (
                 <td colSpan={2}>N/A</td>

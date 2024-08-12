@@ -73,7 +73,7 @@ const Split = () => {
 
       <section>
         <h2>Split files</h2>
-        <table id="gpxs-table">
+        <table>
           <thead>
             <tr>
               <th scope="col">Number</th>
@@ -82,7 +82,7 @@ const Split = () => {
               <th scope="col">Download</th>
             </tr>
           </thead>
-          <tbody id="gpxs-table-body">
+          <tbody>
             {gpxs.length === 0 || errorMessage !== null ? (
               <tr>
                 <td colSpan={4}>{errorMessage === null ? 'N/A' : errorMessage}</td>
